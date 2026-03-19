@@ -651,9 +651,10 @@ function scoreDate(row) {
   if (!d) return '';
   var parts = d.split('-');
   if (parts.length === 3) {
-    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     var m = parseInt(parts[1], 10);
-    return months[m-1] + ' ' + parts[0];
+    var day = parseInt(parts[2], 10);
+    var year = parts[0];
+    return m + '/' + day + '/' + year;
   }
   return d;
 }
@@ -859,7 +860,7 @@ function renderAthleteProfile(row) {
   var gender = row['Gender'] || '';
   var pos = row['Preferred Position'] || '';
   var foot = row['Preferred Foot'] || '';
-  var club = row['Club'] || row['Org'] || '';
+  var club = row._club || row['Club'] || row['Org'] || '';
   var team = row['Team'] || '';
   var mat = row['maturation'] || '';
   var redFlag = (row['Red flag'] || '').toLowerCase() === 'yes';
@@ -1054,7 +1055,7 @@ function renderOverview() {
     t += '<td>' + safeText(a['Gender']||'') + '</td>';
     t += '<td class="mono">' + fmtNum(numVal(a,'Age')) + '</td>';
     t += '<td style="font-size:10px;color:var(--dim);">' + safeText(scoreDate(a)) + '</td>';
-    t += '<td>' + safeText(a['Club']||a['Org']||'') + '</td>';
+    t += '<td>' + safeText(a._club||a['Club']||a['Org']||'') + '</td>';
     t += '</tr>';
   });
   t += '</tbody>';
@@ -1254,6 +1255,252 @@ function renderCompare() {
   document.getElementById('compare-result').innerHTML = html;
 }
 
+// ---- CLUB RESOLUTION (fuzzy matching + canonical grouping) ----
+
+var COLLEGE_NAMES = [
+  'stanford','cal','uc berkeley','berkeley','ucla','usc','notre dame',
+  'duke','north carolina','unc','virginia','penn state','michigan',
+  'ohio state','florida','florida state','fsu','clemson','wake forest',
+  'georgetown','boston college','bc','connecticut','uconn','rutgers',
+  'maryland','washington','washington state','oregon','oregon state',
+  'arizona','arizona state','colorado','utah','byu','brigham young',
+  'santa clara','san jose state','sjsu','cal poly','cal state',
+  'sacramento state','fresno state','san diego state','sdsu',
+  'long beach state','uc davis','uc santa barbara','ucsb','uc irvine',
+  'uc san diego','ucsd','uc riverside','uc santa cruz',
+  'saint marys','saint mary','loyola','pepperdine','gonzaga',
+  'portland','pacific','nevada','unlv','hawaii','air force',
+  'army','navy','west point','annapolis','dartmouth','harvard',
+  'yale','princeton','columbia','brown','penn','upenn','cornell',
+  'fordham','villanova','butler','xavier','creighton','marquette',
+  'depaul','seton hall','st johns','providence','usfca',
+  'university of san francisco','san francisco state'
+];
+
+// Specific manual overrides — checked BEFORE general fuzzy logic
+// Format: { test: function(raw), canonical: 'Name' }
+var MANUAL_RULES = [
+  {
+    canonical: 'Pleasanton Rage',
+    test: function(s) {
+      return s.indexOf('rage') !== -1 && s.indexOf('diablo') === -1;
+    }
+  },
+  {
+    canonical: 'Bay Area Surf',
+    test: function(s) {
+      return (s.indexOf('surf') !== -1 && (s.indexOf('bay') !== -1 || s.indexOf('area') !== -1));
+    }
+  },
+  {
+    canonical: 'Mustang SC',
+    test: function(s) {
+      return s.indexOf('mustang') !== -1 && s.indexOf('diablo') === -1 && s.indexOf('mt.') === -1 && s.indexOf('mt ') === -1 && s.indexOf('mount') === -1;
+    }
+  },
+  {
+    canonical: 'Mt. Diablo FC',
+    test: function(s) {
+      return s.indexOf('diablo') !== -1;
+    }
+  }
+];
+
+// Strip noise words to get a core club name for fuzzy grouping
+function normaliseClub(raw) {
+  return raw
+    .toLowerCase()
+    .replace(/\bfc\b/g, '')
+    .replace(/\bsc\b/g, '')
+    .replace(/\bfa\b/g, '')
+    .replace(/\bac\b/g, '')
+    .replace(/\bec\b/g, '')
+    .replace(/\bunited\b/g, '')
+    .replace(/\bsoccer\b/g, '')
+    .replace(/\bclub\b/g, '')
+    .replace(/\bacademy\b/g, '')
+    .replace(/\belite\b/g, '')
+    .replace(/\bselect\b/g, '')
+    .replace(/\bpremier\b/g, '')
+    .replace(/\bjuniors\b/g, '')
+    .replace(/\bjunior\b/g, '')
+    .replace(/\byouth\b/g, '')
+    .replace(/\busa\b/g, '')
+    .replace(/\bnorcal\b/g, '')
+    .replace(/\bnational\b/g, '')
+    .replace(/\bfootball\b/g, '')
+    .replace(/\bsports\b/g, '')
+    .replace(/\bboyz\b/g, '')
+    .replace(/\bgirls\b/g, '')
+    .replace(/\bboys\b/g, '')
+    .replace(/\b(20\d\d)\b/g, '')   // strip year numbers like 2012, 2015
+    .replace(/[^a-z0-9 ]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+// Check if a string looks like a college
+function isCollege(s) {
+  var lower = s.toLowerCase();
+  for (var i = 0; i < COLLEGE_NAMES.length; i++) {
+    if (lower.indexOf(COLLEGE_NAMES[i]) !== -1) return true;
+  }
+  // Also match "University of X" or "X University" or "X College"
+  if (/university|college/.test(lower)) return true;
+  return false;
+}
+
+// Get canonical college name from a raw string
+function canonicalCollege(s) {
+  var lower = s.toLowerCase();
+  // Well-known specific mappings
+  if (lower.indexOf('stanford') !== -1) return 'Stanford University';
+  if (lower.indexOf('uc berkeley') !== -1 || (lower.indexOf('cal') !== -1 && lower.indexOf('berkeley') !== -1) || lower === 'cal') return 'UC Berkeley';
+  if (lower.indexOf('ucla') !== -1) return 'UCLA';
+  if (lower.indexOf('usc') !== -1 && lower.indexOf('santa') === -1) return 'USC';
+  if (lower.indexOf('santa clara') !== -1) return 'Santa Clara University';
+  if (lower.indexOf('notre dame') !== -1) return 'Notre Dame';
+  if (lower.indexOf('north carolina') !== -1 || lower === 'unc') return 'UNC';
+  if (lower.indexOf('virginia') !== -1 && lower.indexOf('west') === -1) return 'University of Virginia';
+  if (lower.indexOf('penn state') !== -1) return 'Penn State';
+  if (lower.indexOf('florida state') !== -1 || lower === 'fsu') return 'Florida State';
+  if (lower.indexOf('gonzaga') !== -1) return 'Gonzaga';
+  if (lower.indexOf('portland') !== -1) return 'University of Portland';
+  if (lower.indexOf('san jose state') !== -1 || lower === 'sjsu') return 'San Jose State';
+  if (lower.indexOf('san diego state') !== -1 || lower === 'sdsu') return 'San Diego State';
+  if (lower.indexOf('pepperdine') !== -1) return 'Pepperdine';
+  if (lower.indexOf('loyola') !== -1) return 'Loyola';
+  if (lower.indexOf('saint mary') !== -1 || lower.indexOf("saint mary's") !== -1) return "Saint Mary's";
+  if (lower.indexOf('cal poly') !== -1) return 'Cal Poly';
+  if (lower.indexOf('uc davis') !== -1) return 'UC Davis';
+  if (lower.indexOf('uc santa barbara') !== -1 || lower === 'ucsb') return 'UC Santa Barbara';
+  if (lower.indexOf('fresno state') !== -1) return 'Fresno State';
+  if (lower.indexOf('sacramento state') !== -1) return 'Sacramento State';
+  if (lower.indexOf('duke') !== -1) return 'Duke';
+  if (lower.indexOf('michigan') !== -1 && lower.indexOf('state') === -1) return 'University of Michigan';
+  if (lower.indexOf('michigan state') !== -1) return 'Michigan State';
+  if (lower.indexOf('ohio state') !== -1) return 'Ohio State';
+  if (lower.indexOf('washington state') !== -1) return 'Washington State';
+  if (lower.indexOf('washington') !== -1 && lower.indexOf('state') === -1) return 'University of Washington';
+  if (lower.indexOf('oregon state') !== -1) return 'Oregon State';
+  if (lower.indexOf('oregon') !== -1 && lower.indexOf('state') === -1) return 'University of Oregon';
+  if (lower.indexOf('georgetown') !== -1) return 'Georgetown';
+  if (lower.indexOf('boston college') !== -1) return 'Boston College';
+  if (lower.indexOf('uconn') !== -1 || lower.indexOf('connecticut') !== -1) return 'UConn';
+  if (lower.indexOf('harvard') !== -1) return 'Harvard';
+  if (lower.indexOf('yale') !== -1) return 'Yale';
+  if (lower.indexOf('princeton') !== -1) return 'Princeton';
+  if (lower.indexOf('dartmouth') !== -1) return 'Dartmouth';
+  if (lower.indexOf('villanova') !== -1) return 'Villanova';
+  if (lower.indexOf('creighton') !== -1) return 'Creighton';
+  if (lower.indexOf('marquette') !== -1) return 'Marquette';
+  if (lower.indexOf('butler') !== -1) return 'Butler';
+  if (lower.indexOf('air force') !== -1) return 'Air Force Academy';
+  // Generic fallback — title case the cleaned string
+  return s.trim().replace(/\w\S*/g, function(w) { return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase(); });
+}
+
+// Cache so we only compute each raw string once
+var clubCache = {};
+
+function resolveClub(row) {
+  // Check both Club and Org columns
+  var raw = ((row['Club'] || '').trim()) || ((row['Org'] || '').trim());
+  if (!raw) return '';
+
+  if (clubCache[raw] !== undefined) return clubCache[raw];
+
+  var lower = raw.toLowerCase().trim();
+
+  // 1. College check — applies to both Club and Org
+  if (isCollege(lower) || isCollege((row['Org'] || '').toLowerCase())) {
+    var orgRaw = (row['Org'] || '').trim();
+    var src = isCollege(lower) ? raw : orgRaw;
+    var result = canonicalCollege(src);
+    clubCache[raw] = result;
+    return result;
+  }
+
+  // 2. Manual specific rules
+  for (var i = 0; i < MANUAL_RULES.length; i++) {
+    if (MANUAL_RULES[i].test(lower)) {
+      clubCache[raw] = MANUAL_RULES[i].canonical;
+      return MANUAL_RULES[i].canonical;
+    }
+  }
+
+  // 3. General fuzzy normalisation — strip noise, title case
+  var norm = normaliseClub(raw);
+  if (!norm) {
+    clubCache[raw] = raw;
+    return raw;
+  }
+
+  // Title case the normalised core name as canonical
+  var canonical = norm.replace(/\w\S*/g, function(w) {
+    return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
+  });
+
+  // Check if we've already resolved a similar core name to a canonical
+  // (second-pass grouping: if two raw names share the same normalised core, use first-seen canonical)
+  if (!clubCache[raw]) clubCache[raw] = canonical;
+  return clubCache[raw];
+}
+
+// Run resolveClub on all athletes after data loads, store as _club
+function resolveAllClubs() {
+  // First pass — build normalised core -> first canonical mapping
+  var coreToCanonical = {};
+  athletes.forEach(function(a) {
+    var raw = ((a['Club'] || '').trim()) || ((a['Org'] || '').trim());
+    if (!raw) return;
+    var lower = raw.toLowerCase().trim();
+
+    // Skip manual rules and colleges for this pass
+    var isManual = false;
+    for (var i = 0; i < MANUAL_RULES.length; i++) {
+      if (MANUAL_RULES[i].test(lower)) { isManual = true; break; }
+    }
+    if (isManual || isCollege(lower)) return;
+
+    var norm = normaliseClub(raw);
+    if (norm && !coreToCanonical[norm]) {
+      // Use the longest / most complete raw name as canonical for this core
+      coreToCanonical[norm] = raw.trim();
+    } else if (norm && raw.trim().length > coreToCanonical[norm].length) {
+      coreToCanonical[norm] = raw.trim();
+    }
+  });
+
+  // Second pass — assign _club to every athlete
+  clubCache = {};
+  athletes.forEach(function(a) {
+    var raw = ((a['Club'] || '').trim()) || ((a['Org'] || '').trim());
+    if (!raw) { a._club = ''; return; }
+    var lower = raw.toLowerCase().trim();
+
+    // College check
+    if (isCollege(lower) || isCollege((a['Org'] || '').toLowerCase())) {
+      var src = isCollege(lower) ? raw : (a['Org'] || '').trim();
+      a._club = canonicalCollege(src);
+      return;
+    }
+
+    // Manual rules
+    for (var i = 0; i < MANUAL_RULES.length; i++) {
+      if (MANUAL_RULES[i].test(lower)) {
+        a._club = MANUAL_RULES[i].canonical;
+        return;
+      }
+    }
+
+    // General fuzzy — use coreToCanonical mapping
+    var norm = normaliseClub(raw);
+    a._club = norm && coreToCanonical[norm] ? coreToCanonical[norm] : raw.trim();
+  });
+}
+
+
 // ---- CLUBS ----
 function renderClubs() {
   if (!athletes.length) return;
@@ -1267,7 +1514,7 @@ function renderClubs() {
 
   var clubs = {};
   filtered.forEach(function(a) {
-    var c = (a['Club'] || a['Org'] || '').trim();
+    var c = (a._club || '').trim();
     if (!c) return;
     if (!clubs[c]) clubs[c] = [];
     clubs[c].push(numVal(a, metric));
@@ -1318,7 +1565,7 @@ function buildSearchHandler(inputId, resultsId, onSelect) {
     if (!matches.length) return;
     results.innerHTML = matches.map(function(a) {
       var name = (a['First name']||'') + ' ' + (a['Last name']||'');
-      var meta = (a['Gender']||'') + (numVal(a,'Age')!==null ? ', Age '+numVal(a,'Age').toFixed(1) : '') + (a['Club']||a['Org'] ? ' — '+(a['Club']||a['Org']) : '');
+      var meta = (a['Gender']||'') + (numVal(a,'Age')!==null ? ', Age '+numVal(a,'Age').toFixed(1) : '') + (a._club ? ' — '+a._club : (a['Club']||a['Org'] ? ' — '+(a['Club']||a['Org']) : ''));
       return '<div class="search-result-item" data-fn="' + safeText(a['First name']||'') + '" data-ln="' + safeText(a['Last name']||'') + '"><span class="sri-name">' + safeText(name) + '</span><span class="sri-meta">' + safeText(meta) + '</span></div>';
     }).join('');
     results.style.display = 'block';
@@ -1393,6 +1640,7 @@ function onDataLoaded() {
   document.getElementById('upload-screen').style.display = 'none';
   document.querySelectorAll('.view').forEach(function(v){ v.style.display=''; });
   updateStatus();
+  resolveAllClubs();
   populatePositions();
   populateDates();
   renderOverview();
