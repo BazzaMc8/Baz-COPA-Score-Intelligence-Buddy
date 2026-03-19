@@ -98,7 +98,7 @@ input[type=file] { display: none; }
 nav {
   width: 60px; background: var(--bg2); border-right: 1px solid var(--bg4);
   display: flex; flex-direction: column; align-items: center;
-  padding: 12px 0; gap: 4px; flex-shrink: 0;
+  padding: 12px 0; gap: 4px; flex-shrink: 0; justify-content: flex-start;
 }
 .nav-btn {
   width: 44px; height: 44px; border-radius: var(--r); border: none;
@@ -314,6 +314,85 @@ canvas { max-height: 280px; }
 .flex { display: flex; }
 .gap8 { gap: 8px; }
 .items-center { align-items: center; }
+
+/* ---- BAZ CHATBOT PANEL ---- */
+.baz-panel {
+  width: 0; min-width: 0; max-width: 0;
+  background: var(--bg2); border-right: 1px solid var(--bg4);
+  display: flex; flex-direction: column; overflow: hidden;
+  transition: all .3s ease; flex-shrink: 0;
+}
+.baz-panel.open {
+  width: 320px; min-width: 320px; max-width: 320px;
+}
+.baz-panel-inner { width: 320px; display: flex; flex-direction: column; height: 100%; overflow: hidden; }
+.baz-hdr {
+  padding: 12px 14px 10px; border-bottom: 1px solid var(--bg4);
+  display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+}
+.baz-avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--gold); display: flex; align-items: center; justify-content: center;
+  font-family: 'Bebas Neue', sans-serif; font-size: 13px; color: var(--bg); flex-shrink: 0;
+}
+.baz-hdr-text h3 { font-family: 'Bebas Neue', sans-serif; font-size: 15px; letter-spacing: 2px; color: var(--gold); line-height: 1; }
+.baz-hdr-text p { font-size: 9px; color: var(--dim); letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; }
+.baz-close { margin-left: auto; background: none; border: none; color: var(--dim); cursor: pointer; font-size: 16px; padding: 2px 4px; line-height: 1; }
+.baz-close:hover { color: var(--text); }
+.baz-starters { padding: 10px 12px; border-bottom: 1px solid var(--bg4); flex-shrink: 0; }
+.baz-starter-label { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--dim); margin-bottom: 6px; }
+.baz-starter {
+  font-size: 10px; color: var(--dim); padding: 5px 8px; border: 1px solid var(--bg4);
+  border-radius: var(--r); cursor: pointer; margin-bottom: 4px; line-height: 1.4;
+  transition: all .15s; display: block; width: 100%; text-align: left; background: transparent;
+  font-family: 'DM Sans', sans-serif;
+}
+.baz-starter:hover { border-color: var(--gold-mid); color: var(--gold); background: var(--gold-dim); }
+.baz-messages { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+.baz-msg { display: flex; gap: 7px; }
+.baz-msg.user { flex-direction: row-reverse; }
+.baz-msg-av { width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; margin-top: 2px; }
+.baz-msg.baz .baz-msg-av { background: var(--gold); color: var(--bg); font-family: 'Bebas Neue', sans-serif; font-size: 10px; }
+.baz-msg.user .baz-msg-av { background: var(--blue); color: #fff; }
+.baz-bubble {
+  max-width: 230px; padding: 8px 11px; border-radius: 8px;
+  font-size: 11px; line-height: 1.65; color: var(--text);
+}
+.baz-msg.baz .baz-bubble { background: var(--bg3); border: 1px solid var(--bg4); border-radius: 2px 8px 8px 8px; }
+.baz-msg.user .baz-bubble { background: var(--blue); color: #fff; border-radius: 8px 2px 8px 8px; }
+.baz-bubble strong { color: var(--gold); font-weight: 600; }
+.baz-bubble em { color: var(--text2); font-style: normal; font-size: 10px; }
+.baz-bubble .baz-ref { font-size: 9px; color: var(--dim); margin-top: 6px; border-top: 1px solid var(--bg4); padding-top: 5px; font-style: italic; }
+.baz-tbl { width: 100%; border-collapse: collapse; margin-top: 7px; font-size: 10px; }
+.baz-tbl th { background: var(--bg4); color: var(--gold); padding: 4px 6px; text-align: left; font-size: 8px; letter-spacing: 1px; text-transform: uppercase; }
+.baz-tbl td { padding: 4px 6px; border-bottom: 1px solid var(--bg4); color: var(--text2); }
+.baz-tbl tr:last-child td { border-bottom: none; }
+.baz-tbl td.mono { font-family: 'JetBrains Mono', monospace; color: var(--gold); }
+.baz-typing { display: flex; gap: 3px; padding: 3px 0; }
+.baz-typing span { width: 5px; height: 5px; border-radius: 50%; background: var(--gold); animation: bop .8s infinite; display: block; }
+.baz-typing span:nth-child(2) { animation-delay: .15s; }
+.baz-typing span:nth-child(3) { animation-delay: .3s; }
+.baz-input-area { padding: 10px 12px; border-top: 1px solid var(--bg4); flex-shrink: 0; }
+.baz-input-row {
+  display: flex; gap: 6px; align-items: flex-end;
+  background: var(--bg3); border: 1px solid var(--bg4); border-radius: 8px; padding: 7px 10px;
+  transition: border-color .15s;
+}
+.baz-input-row:focus-within { border-color: var(--gold); }
+#baz-input {
+  flex: 1; background: transparent; border: none; outline: none;
+  color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 11px;
+  resize: none; min-height: 18px; max-height: 80px; line-height: 1.5;
+}
+#baz-input::placeholder { color: var(--dim); }
+#baz-send {
+  background: var(--gold); border: none; color: var(--bg);
+  width: 26px; height: 26px; border-radius: 6px; cursor: pointer;
+  font-size: 12px; flex-shrink: 0; transition: background .15s;
+}
+#baz-send:hover { background: var(--gold-dark); }
+.nav-btn.baz-toggle { }
+
 </style>
 </head>
 <body>
@@ -351,6 +430,8 @@ canvas { max-height: 280px; }
 <div class="app">
   <!-- NAV -->
   <nav>
+    <button class="nav-btn baz-toggle" id="baz-toggle-btn">🤖<span>BAZ</span></button>
+    <div class="nav-divider"></div>
     <button class="nav-btn on" data-view="overview">📊<span>Overview</span></button>
     <button class="nav-btn" data-view="search">🔍<span>Athlete</span></button>
     <button class="nav-btn" data-view="leaderboard">🏆<span>Ranks</span></button>
@@ -358,6 +439,37 @@ canvas { max-height: 280px; }
     <button class="nav-btn" data-view="compare">⚡<span>Compare</span></button>
     <button class="nav-btn" data-view="clubs">🏟️<span>Clubs</span></button>
   </nav>
+
+
+  <!-- BAZ CHATBOT PANEL -->
+  <div class="baz-panel" id="baz-panel">
+    <div class="baz-panel-inner">
+      <div class="baz-hdr">
+        <div class="baz-avatar">BAZ</div>
+        <div class="baz-hdr-text">
+          <h3>ASK BAZ</h3>
+          <p>COPA Intelligence Buddy</p>
+        </div>
+        <button class="baz-close" id="baz-close">&#x2715;</button>
+      </div>
+      <div class="baz-starters">
+        <div class="baz-starter-label">Suggested Questions</div>
+        <button class="baz-starter" data-q="What is PHV and why does it matter for my athletes?">What is PHV and why does it matter?</button>
+        <button class="baz-starter" data-q="How should I approach speed development for U14 athletes?">Speed development for U14 athletes</button>
+        <button class="baz-starter" data-q="Show me the 10 fastest females aged 12-14 in 2026">10 fastest females aged 12-14 in 2026</button>
+        <button class="baz-starter" data-q="What is the average Top Speed for male athletes aged 10-12?">Avg Top Speed males aged 10-12</button>
+        <button class="baz-starter" data-q="How many athletes are in the Circa-PHV stage?">How many athletes are Circa-PHV?</button>
+        <button class="baz-starter" data-q="How can I improve cognitive performance in young players?">Improving cognitive performance</button>
+      </div>
+      <div class="baz-messages" id="baz-messages"></div>
+      <div class="baz-input-area">
+        <div class="baz-input-row">
+          <textarea id="baz-input" rows="1" placeholder="Ask BAZ anything..."></textarea>
+          <button id="baz-send">&#9654;</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- MAIN -->
   <div class="main">
@@ -1763,7 +1875,515 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('club-metric').addEventListener('change', renderClubs);
   document.getElementById('club-gender').addEventListener('change', renderClubs);
 
+  // ---- INIT BAZ CHAT ----
+  initBazChat();
+
 });
+
+// ---- BAZ CHATBOT ----
+// ================================================================
+// BAZ CHATBOT — Pattern-matching intelligence buddy
+// No API required. Dataset queries run on loaded athlete data.
+// ================================================================
+
+// ---- KNOWLEDGE BASE ----
+var BAZ_KB = [
+  {
+    tags: ['ltad','long term','athlete development','framework','stages'],
+    response: 'Great question. <strong>Long-Term Athlete Development (LTAD)</strong> is a science-based framework that guides training based on biological age — not just chronological age.\n\nThe key stages relevant to your players:\n\n<strong>FUNdamentals (U6-U9):</strong> Focus on ABCs — Agility, Balance, Coordination, Speed. Keep it play-based.\n\n<strong>Learn to Train (U9-U12):</strong> The golden age of motor learning. Technical skills are absorbed fastest here. Prioritise ball work and movement literacy.\n\n<strong>Train to Train (U12-U16):</strong> PHV occurs here. Aerobic base, technical refinement, strength foundations. Monitor maturation closely — this is where BAZ\'s red flag and PHV data matters most.\n\n<strong>Train to Compete (U16-U18):</strong> Sport-specific conditioning, mental skills, periodised training loads.',
+    ref: 'Balyi, I., Way, R., & Higgs, C. (2013). Long-Term Athlete Development. Human Kinetics.'
+  },
+  {
+    tags: ['phv','peak height velocity','growth spurt','growth','puberty'],
+    response: '<strong>Peak Height Velocity (PHV)</strong> is the point of fastest upward growth — typically 8-10cm per year. It\'s one of the most important concepts in youth player development.\n\nKey things to know:\n\n<strong>Timing varies widely.</strong> Girls typically hit PHV between 11-13, boys between 13-15. But there\'s a 4-5 year window across any age group — two 13-year-olds can be biologically 3 years apart.\n\n<strong>During Circa-PHV:</strong> Bone growth outpaces muscle and tendon development. This creates a temporary period of reduced coordination and elevated injury risk — particularly to growth plates. Training loads should be conservative and strength work prioritised.\n\n<strong>The BAZ red flag</strong> identifies athletes in this zone (85-95% of adult height). Use it proactively.',
+    ref: 'Malina, R.M. et al. (2004). Growth, Maturation and Physical Activity. Human Kinetics.'
+  },
+  {
+    tags: ['maturation','early maturer','late maturer','relative age','rae','biological age'],
+    response: '<strong>Maturation timing matters enormously</strong> — and is one of the most misunderstood areas in youth soccer.\n\n<strong>Early maturers</strong> often dominate youth teams physically. They\'re bigger, faster, and stronger right now. But this advantage is temporary. If we select and develop based on physical dominance alone, we risk overlooking technically gifted late maturers — and creating early maturers who never develop the technical and cognitive skills needed later.\n\n<strong>Late maturers</strong> are often deselected too early. Research consistently shows they can have equal or superior technical and cognitive skills. They just need time and a patient coaching environment.\n\n<strong>Relative Age Effect (RAE):</strong> Players born early in the selection year are systematically overrepresented at elite level due to maturation advantages. Something to audit in your own data.',
+    ref: 'Cobley, S. et al. (2009). Annual Age-Grouping and Athlete Development. Sports Medicine, 39(3), 235-256.'
+  },
+  {
+    tags: ['speed','sprint','10 yard','30 yard','acceleration','fast','fastest'],
+    response: '<strong>Speed development</strong> is one of the most trainable physical qualities in youth athletes — but timing matters.\n\n<strong>Acceleration (10-yard):</strong> Driven by first-step quickness, force application angle, and arm mechanics. Highly coachable at any age.\n\n<strong>Maximum velocity (Top Speed):</strong> Best developed during and just after PHV when the neuromuscular system is most responsive to speed stimulus. This is a key window.\n\n<strong>What the research shows:</strong> Sprint speed responds best to short, maximal-intensity efforts with full recovery — not long runs. Think 10-30m at 100% effort, 2-3 minute rest between reps.\n\n<strong>For younger athletes (U12 and below):</strong> Focus on movement quality — A-skips, B-skips, wall drills — before chasing times. Technique is the speed limiter at this age.',
+    ref: 'Lloyd, R.S. & Oliver, J.L. (2012). The Youth Physical Development Model. Strength and Conditioning Journal, 34(3), 61-72.'
+  },
+  {
+    tags: ['jump','vertical','cmj','power','explosive','plyometric'],
+    response: '<strong>Vertical jump (CMJ)</strong> is a reliable measure of lower-body explosive power — a key athletic quality for soccer.\n\n<strong>Why it matters:</strong> Power underpins acceleration, change of direction, and aerial ability. Athletes with high CMJ scores tend to accelerate faster and recover quicker between explosive actions.\n\n<strong>Training it:</strong> Plyometrics are highly effective, but must be periodised carefully around PHV. During active growth spurts, reduce plyometric volume and prioritise landing mechanics and strength foundations.\n\n<strong>Post-PHV</strong> is the prime window for maximal power development. Athletes who are Post-PHV can handle higher volumes of jump training and Olympic lifting progressions.\n\n<strong>Practical tip:</strong> Single-leg work is underused. Split squats, single-leg RDLs, and single-leg bounds have high transfer to soccer movement patterns.',
+    ref: 'Meylan, C. et al. (2014). Talent Identification in Soccer. Journal of Sports Sciences, 32(13), 1216-1223.'
+  },
+  {
+    tags: ['agility','change of direction','reactive','decision','cod'],
+    response: '<strong>Agility</strong> in soccer has two components:\n\n<strong>1. Change of Direction Speed (CODS):</strong> Pre-planned direction changes. Trainable through ladder work, cone drills, deceleration mechanics.\n\n<strong>2. Reactive Agility:</strong> Responding to an unplanned stimulus — what the BAZ Agility test measures. This is closer to real game demands.\n\nResearch shows these are actually distinct qualities — an athlete can excel at CODS drills but be slow in reactive situations. Always train both.\n\n<strong>Key coaching cue:</strong> Deceleration is the most undercoached part. The ability to brake efficiently before a direction change is what separates good from great movers — and protects against ACL injury.\n\n<strong>For younger athletes:</strong> Focus on body position and low centre of gravity during changes. Speed comes second.',
+    ref: 'Sheppard, J.M. & Young, W.B. (2006). Agility Literature Review. Journal of Sports Sciences, 24(9), 919-932.'
+  },
+  {
+    tags: ['cognitive','brain','decision making','vts','stress tolerance','reaction','mental'],
+    response: '<strong>Cognitive performance</strong> is increasingly recognised as a key differentiator in elite soccer — and one of the most exciting areas to develop.\n\nBAZ measures three cognitive qualities:\n\n<strong>Stress Tolerance Score (VTS Stress):</strong> How well a player maintains performance under cognitive pressure. Higher = better. Think of it as mental composure under load — directly relevant to late-game decision making.\n\n<strong>Reaction Time (VTS MRT):</strong> Speed of response to a stimulus. Lower = faster. Trains well with sport-specific stimulus-response practice.\n\n<strong>Accuracy (VTS Incorrect):</strong> Error rate. Fewer errors = more reliable cognitive output under pressure.\n\n<strong>How to improve it:</strong> Constraint-led training, small-sided games with cognitive load, decision-making under fatigue, and deliberate practice with varied stimuli. The brain responds to challenge the same way muscles do — progressive overload.',
+    ref: 'Vestberg, T. et al. (2017). Core Executive Functions Are Associated with Success in Young Elite Soccer Players. PLOS ONE, 12(2).'
+  },
+  {
+    tags: ['technical','ball','cube','cube rating','cube accuracy','touch','dribbling','skill'],
+    response: '<strong>Technical development</strong> is most effective when it happens early and often — but it never stops being trainable.\n\n<strong>The golden window:</strong> Ages 9-12 (Learn to Train stage) offer the highest neuroplasticity for motor skill acquisition. Ball mastery during this period has compounding returns throughout a career.\n\n<strong>What the Cube Rating measures:</strong> A composite of passing accuracy and execution speed under a standardised protocol. It\'s a reliable, objective snapshot of ball control quality.\n\n<strong>For low Cube Accuracy scores:</strong> Focus on first touch, receiving under pressure, and pass quality at reduced tempo before adding speed.\n\n<strong>For low Cube Speed scores:</strong> The player is accurate but slow. Progress to higher-tempo small-sided games and time-pressured practice. Think: one-touch finishing, quick combination sequences.\n\n<strong>Research note:</strong> Deliberate play (unstructured) and deliberate practice (structured) are both important. Neither alone is sufficient.',
+    ref: 'Ford, P. et al. (2012). The Long-Term Athlete Development Model: Physiological Evidence and Application. Journal of Sports Sciences, 29(4), 389-402.'
+  },
+  {
+    tags: ['load','training load','overtraining','recovery','rest','fatigue','injury prevention','burnout'],
+    response: '<strong>Training load management</strong> is one of the highest-leverage interventions in youth development — and one of the most neglected.\n\n<strong>The ACWR (Acute:Chronic Workload Ratio)</strong> is the gold standard framework. Keep the ratio between 0.8-1.3 for low injury risk. Spikes above 1.5 dramatically increase injury probability.\n\n<strong>For Circa-PHV athletes:</strong> Reduce high-intensity load and volume during peak growth. Bone is the limiting tissue — it\'s being stretched by growing faster than the surrounding structures. This is why BAZ flags these athletes.\n\n<strong>Early specialisation risk:</strong> Single-sport before age 12-13 is associated with increased overuse injury and burnout. Encourage multi-sport participation.\n\n<strong>Practical signs to watch:</strong> Sleep quality decline, mood changes, motivation dips, and perceived effort going up for the same training. These are early overload signals that precede injury.',
+    ref: 'Gabbett, T.J. (2016). The Training-Injury Prevention Paradox. British Journal of Sports Medicine, 50(5), 273-280.'
+  },
+  {
+    tags: ['nutrition','food','fuel','diet','protein','carbs','hydration','water'],
+    response: '<strong>Youth athlete nutrition</strong> is often overlooked but has a direct impact on training quality, recovery, and development.\n\n<strong>Energy availability:</strong> Growing athletes need more fuel than recreational players. Undereating is common — especially in female athletes — and directly impairs development and bone health.\n\n<strong>Key principles:</strong>\n\n<strong>Carbohydrates</strong> are the primary fuel for high-intensity soccer. Don\'t restrict them in youth athletes.\n\n<strong>Protein:</strong> 1.4-1.7g per kg of bodyweight per day supports muscle development. Spread across meals — not just after training.\n\n<strong>Hydration:</strong> Even 2% dehydration measurably impairs cognitive performance and technical skill. Encourage drinking before feeling thirsty.\n\n<strong>Recovery window:</strong> Protein and carbohydrates within 30-45 minutes post-training accelerates recovery — especially important around tournaments.',
+    ref: 'Purcell, L.K. (2013). Sport Nutrition for Young Athletes. Paediatrics & Child Health, 18(4), 200-202.'
+  },
+  {
+    tags: ['strength','weights','resistance','gym','lifting'],
+    response: '<strong>Strength training</strong> in youth athletes is one of the most evidence-supported interventions available — and one of the most misunderstood.\n\n<strong>The myth:</strong> Lifting stunts growth. This is not supported by any peer-reviewed evidence. Growth plate injuries from appropriate resistance training are extremely rare and typically caused by poor technique or inappropriate loading.\n\n<strong>The reality:</strong> Resistance training improves bone density, reduces injury risk, enhances athletic performance, and builds the physical literacy needed at senior level.\n\n<strong>Age-appropriate approach:</strong>\n\n<strong>U12:</strong> Bodyweight mastery — push, pull, hinge, squat, carry. Movement quality only.\n\n<strong>U13-U15:</strong> Introduce external load progressively. Technique first, load second. Olympic lifting progressions can begin here with qualified coaching.\n\n<strong>U16+:</strong> Periodised strength programme aligned with the soccer season.',
+    ref: 'Lloyd, R.S. et al. (2014). Position Statement on Youth Resistance Training. British Journal of Sports Medicine, 48(7), 498-505.'
+  },
+  {
+    tags: ['copa score','what is copa','how is copa calculated','overall score','composite'],
+    response: 'The <strong>COPA Score</strong> is a composite 0-100 index that combines three domains:\n\n<strong>Physical Score</strong> — sprint speed, top speed, agility, and explosive power (CMJ)\n\n<strong>Technical Score</strong> — ball control quality via the Cube test (accuracy + speed)\n\n<strong>Cognitive Score</strong> — decision-making speed, stress tolerance, and accuracy under pressure (VTS)\n\nHigher is always better for the Copa Score. It\'s designed to give a single, objective view of athletic potential across the full player profile — not just physical attributes.\n\n<strong>Key insight:</strong> Look for gaps between domains. A player with a high Physical Score but low Technical or Cognitive score has a clear development focus. A player with a high Cognitive score but low Physical score may be a late maturer with real upside.',
+    ref: 'COPA Score methodology — COPA Soccer Training Center internal assessment framework.'
+  },
+  {
+    tags: ['sleep','rest','recovery','regeneration'],
+    response: '<strong>Sleep is the most powerful recovery tool available</strong> — and the most underused in youth sport.\n\n<strong>What the research shows:</strong> Youth athletes aged 13-18 need 8-10 hours per night. Most get 6-7. That gap has measurable consequences.\n\n<strong>Effects of poor sleep on athletes:</strong> Reaction time slows (equivalent to mild intoxication at 17+ hours awake), technical error rates increase, injury risk rises significantly, and hormonal recovery is impaired.\n\n<strong>For coaches:</strong> Consider scheduling early morning training sparingly for younger athletes. A Stanford study on basketball players showed that extending sleep to 10 hours improved sprint times, shooting accuracy, and reaction time — without any other training change.\n\n<strong>Practical advice for parents:</strong> No screens 1 hour before bed. Consistent wake time matters more than consistent bedtime.',
+    ref: 'Mah, C.D. et al. (2011). The Effects of Sleep Extension on Athletic Performance. Sleep, 34(7), 943-950.'
+  },
+  {
+    tags: ['female','girls','women','girl athletes'],
+    response: '<strong>Female athlete development</strong> has specific considerations that are distinct from male pathways.\n\n<strong>PHV timing:</strong> Girls typically hit peak growth 1-2 years earlier than boys — usually 11-13. This means the Circa-PHV window and its associated injury risk arrives sooner.\n\n<strong>ACL injury risk:</strong> Female athletes experience ACL injuries at 2-6x the rate of males following puberty. This is linked to hormonal changes affecting ligament laxity, hip-to-knee alignment changes, and neuromuscular patterns. Prevention programmes (FIFA 11+) have strong evidence.\n\n<strong>Relative Energy Deficiency in Sport (RED-S):</strong> Previously known as the Female Athlete Triad. Energy restriction — deliberate or inadvertent — in female athletes impairs bone health, hormonal function, and performance. Worth screening for.\n\n<strong>Coaching note:</strong> Research shows female athletes respond particularly well to autonomy-supportive coaching — explain the why, involve them in decisions, and build psychological safety in training environments.',
+    ref: 'Mountjoy, M. et al. (2014). The IOC Consensus Statement on Relative Energy Deficiency in Sport. British Journal of Sports Medicine, 48(7), 491-497.'
+  },
+  {
+    tags: ['mental health','wellbeing','psychology','confidence','mindset','anxiety','pressure'],
+    response: '<strong>Psychological wellbeing</strong> is a performance factor — not separate from it.\n\n<strong>What matters most for youth athletes:</strong>\n\n<strong>Autonomy:</strong> Athletes who feel they have choice and input into their development show greater motivation, resilience, and long-term adherence.\n\n<strong>Mastery climate vs performance climate:</strong> Environments focused on effort and improvement outperform those focused on winning and comparison — especially for long-term development.\n\n<strong>Anxiety and performance:</strong> Some arousal is beneficial (the inverted-U). But chronic performance anxiety impairs working memory and decision-making — directly visible in cognitive metrics like Stress Tolerance and Reaction Time.\n\n<strong>What to do:</strong> Prioritise process goals over outcome goals. Celebrate effort and improvement. Create psychological safety where mistakes are learning opportunities.',
+    ref: 'Duda, J.L. (2013). The Conceptual and Empirical Foundations of Empowering Coaching. Psychology of Sport and Exercise, 14(5), 545-556.'
+  },
+  {
+    tags: ['hello','hi','hey','help','what can you do','who are you','baz'],
+    response: 'Hey! I\'m <strong>BAZ</strong> — the COPA Score Intelligence Buddy.\n\nI\'m here to help with two things:\n\n<strong>1. Player Development Q&A</strong>\nAsk me anything about athletic development, training science, maturation, speed, technical skills, cognitive performance, nutrition, recovery — I\'ll give you a science-based answer in plain language.\n\n<strong>2. Dataset Queries</strong>\nWith your data loaded, ask me things like:\n— "Show me the 10 fastest females aged 12-14 in 2026"\n— "Average Top Speed for males aged 10-12"\n— "How many athletes are in Circa-PHV?"\n\nWhat would you like to know?'
+  }
+];
+
+// ---- DATASET QUERY ENGINE ----
+var METRIC_ALIASES = {
+  'top speed': 'Top Speed',
+  'speed': 'Top Speed',
+  'fastest': '10 Yard',
+  '10 yard': '10 Yard',
+  '10-yard': '10 Yard',
+  'acceleration': '10 Yard',
+  '30 yard': '30 yard',
+  '30-yard': '30 yard',
+  'copa score': 'Copa score',
+  'copa': 'Copa score',
+  'overall score': 'Copa score',
+  'physical score': 'Physical score',
+  'physical': 'Physical score',
+  'technical score': 'Technical score',
+  'technical': 'Technical score',
+  'cognitive score': 'Cognitive score',
+  'cognitive': 'Cognitive score',
+  'cube rating': 'Cube Rating',
+  'ball control': 'Cube Rating',
+  'cube accuracy': 'Cube Accuracy',
+  'passing accuracy': 'Cube Accuracy',
+  'accuracy': 'Cube Accuracy',
+  'cube speed': 'Cube Speed',
+  'vts stress': 'VTS Stress',
+  'stress tolerance': 'VTS Stress',
+  'reaction time': 'VTS MRT',
+  'reaction': 'VTS MRT',
+  'vts mrt': 'VTS MRT',
+  'vertical jump': 'CMJ Inches',
+  'jump height': 'CMJ Inches',
+  'cmj': 'CMJ Inches',
+  'jump': 'CMJ Inches',
+  'agility': 'Agility'
+};
+
+function detectMetric(q) {
+  var lower = q.toLowerCase();
+  var best = null;
+  var bestLen = 0;
+  Object.keys(METRIC_ALIASES).forEach(function(alias) {
+    if (lower.indexOf(alias) !== -1 && alias.length > bestLen) {
+      best = METRIC_ALIASES[alias];
+      bestLen = alias.length;
+    }
+  });
+  return best;
+}
+
+function detectGender(q) {
+  var lower = q.toLowerCase();
+  if (/\b(female|females|girls|girl|women|woman)\b/.test(lower)) return 'female';
+  if (/\b(male|males|boys|boy|men|man)\b/.test(lower)) return 'male';
+  return 'all';
+}
+
+function detectAgeRange(q) {
+  var lower = q.toLowerCase();
+  // "aged 12-14" or "age 12 to 14" or "12-14 year" or "ages 12-14"
+  var m = lower.match(/\baged?\s*(\d+)\s*(?:to|-|–)\s*(\d+)/);
+  if (m) return { lo: parseFloat(m[1]), hi: parseFloat(m[2]) };
+  // "under 14" or "u14"
+  var u = lower.match(/\b(?:under|u)\s*(\d+)\b/);
+  if (u) return { lo: 0, hi: parseFloat(u[1]) };
+  // "over 15"
+  var o = lower.match(/\bover\s*(\d+)\b/);
+  if (o) return { lo: parseFloat(o[1]), hi: 99 };
+  return null;
+}
+
+function detectYear(q) {
+  var m = q.match(/\b(202[0-9])\b/);
+  return m ? m[1] : null;
+}
+
+function detectN(q) {
+  var lower = q.toLowerCase();
+  // "top 10", "10 fastest", "best 5", "show 15"
+  var m = lower.match(/\b(?:top|best|fastest|show|slowest|lowest|highest)?\s*(\d+)\b/);
+  if (m) {
+    var n = parseInt(m[1]);
+    if (n >= 1 && n <= 50) return n;
+  }
+  return 10; // default
+}
+
+function detectAggregate(q) {
+  var lower = q.toLowerCase();
+  if (/\b(average|avg|mean)\b/.test(lower)) return 'avg';
+  if (/\b(how many|count|number of)\b/.test(lower)) return 'count';
+  if (/\b(best|highest|top|most|fastest|lowest|worst|slowest)\b/.test(lower)) return 'top';
+  if (/\b(show|list|give me|display|who)\b/.test(lower)) return 'list';
+  return 'list';
+}
+
+function detectPHV(q) {
+  var lower = q.toLowerCase();
+  if (/circa.?phv|circa phv|growth spurt|red.?flag/.test(lower)) return 'circa';
+  if (/pre.?phv|pre phv/.test(lower)) return 'pre';
+  if (/post.?phv|post phv/.test(lower)) return 'post';
+  return null;
+}
+
+function fmtMetricVal(key, v) {
+  if (v === null) return '-';
+  var val = parseFloat(v);
+  if (key === 'Top Speed') return val.toFixed(1) + ' mph';
+  if (key === 'CMJ Inches') return val.toFixed(1) + '"';
+  if (key === 'Cube Accuracy') return Math.round(val * 100) + '%';
+  if (key === '10 Yard' || key === '30 yard' || key === 'Agility' || key === 'VTS MRT') return val.toFixed(2) + 's';
+  return val.toFixed(1);
+}
+
+function runDatasetQuery(q) {
+  if (!athletes.length) {
+    return { text: 'No data loaded yet. Please upload your CSV files first using the + Load CSVs button at the top.', table: null };
+  }
+
+  var gender = detectGender(q);
+  var ageRange = detectAgeRange(q);
+  var year = detectYear(q);
+  var metric = detectMetric(q);
+  var agg = detectAggregate(q);
+  var phvFilter = detectPHV(q);
+  var n = detectN(q);
+  var m = metric ? METRIC_MAP[metric] : null;
+
+  // Filter athletes
+  var filtered = athletes.filter(function(a) {
+    if (gender !== 'all' && (a['Gender'] || '').toLowerCase() !== gender) return false;
+    if (year && (a['Score date'] || '').indexOf(year) === -1) return false;
+    if (ageRange) {
+      var age = numVal(a, 'Age');
+      if (age === null || age < ageRange.lo || age > ageRange.hi) return false;
+    }
+    if (phvFilter) {
+      var pct = numVal(a, '% Adult Height');
+      if (pct === null) return false;
+      if (phvFilter === 'circa' && (pct < 0.85 || pct > 0.95)) return false;
+      if (phvFilter === 'pre' && pct >= 0.85) return false;
+      if (phvFilter === 'post' && pct <= 0.95) return false;
+    }
+    if (metric && numVal(a, metric) === null) return false;
+    return true;
+  });
+
+  // Build description
+  var desc = '';
+  if (gender !== 'all') desc += gender + ' ';
+  desc += 'athletes';
+  if (ageRange) {
+    if (ageRange.hi === 99) desc += ' over ' + ageRange.lo;
+    else if (ageRange.lo === 0) desc += ' under ' + ageRange.hi;
+    else desc += ' aged ' + ageRange.lo + '–' + ageRange.hi;
+  }
+  if (year) desc += ' (' + year + ')';
+  if (phvFilter) desc += ' in ' + phvFilter.charAt(0).toUpperCase() + phvFilter.slice(1) + '-PHV';
+
+  // COUNT query
+  if (agg === 'count') {
+    return { text: 'There are <strong>' + filtered.length + '</strong> ' + desc + ' in the database.', table: null };
+  }
+
+  // AVERAGE query
+  if (agg === 'avg' && metric) {
+    var vals = filtered.map(function(a) { return numVal(a, metric); }).filter(function(v) { return v !== null; });
+    if (!vals.length) return { text: 'No data found for ' + desc + '.', table: null };
+    var avgVal = vals.reduce(function(s, v) { return s + v; }, 0) / vals.length;
+    var minVal = Math.min.apply(null, vals);
+    var maxVal = Math.max.apply(null, vals);
+    var metricLabel = m ? m.label : metric;
+    return {
+      text: 'Here\'s the <strong>' + metricLabel + '</strong> breakdown for <strong>' + filtered.length + '</strong> ' + desc + ':',
+      table: {
+        headers: ['Stat', 'Value'],
+        rows: [
+          ['Average', fmtMetricVal(metric, avgVal)],
+          [m && m.asc ? 'Best (lowest)' : 'Best (highest)', fmtMetricVal(metric, m && m.asc ? minVal : maxVal)],
+          [m && m.asc ? 'Lowest (highest)' : 'Lowest (lowest)', fmtMetricVal(metric, m && m.asc ? maxVal : minVal)],
+          ['n (athletes)', filtered.length + '']
+        ]
+      }
+    };
+  }
+
+  // LIST / TOP query
+  if (metric) {
+    var metricLabel2 = m ? m.label : metric;
+    var sorted = filtered.slice().sort(function(a, b) {
+      var av = numVal(a, metric) || 0;
+      var bv = numVal(b, metric) || 0;
+      return m && m.asc ? av - bv : bv - av;
+    });
+    var top = sorted.slice(0, n);
+    if (!top.length) return { text: 'No ' + desc + ' found matching your query.', table: null };
+    return {
+      text: 'Here are the <strong>top ' + top.length + '</strong> ' + desc + ' by <strong>' + metricLabel2 + '</strong>:',
+      table: {
+        headers: ['#', 'Name', metricLabel2, 'Age', 'Club'],
+        rows: top.map(function(a, i) {
+          return [
+            String(i + 1),
+            (a['First name'] || '') + ' ' + (a['Last name'] || ''),
+            fmtMetricVal(metric, numVal(a, metric)),
+            numVal(a, 'Age') !== null ? numVal(a, 'Age').toFixed(1) : '-',
+            a._club || a['Club'] || a['Org'] || '-'
+          ];
+        })
+      }
+    };
+  }
+
+  // No metric — just show count and summary
+  if (!filtered.length) return { text: 'No athletes found matching that query.', table: null };
+
+  var copaVals2 = filtered.map(function(a) { return numVal(a, 'Copa score'); }).filter(function(v) { return v !== null; });
+  var avgCopa2 = copaVals2.length ? (copaVals2.reduce(function(s, v) { return s + v; }, 0) / copaVals2.length).toFixed(1) : '-';
+  return {
+    text: 'Found <strong>' + filtered.length + '</strong> ' + desc + '. Average Copa Score: <strong>' + avgCopa2 + '</strong>. Try asking for a specific metric — e.g. "average Top Speed" or "top 10 by Copa Score".',
+    table: null
+  };
+}
+
+// ---- KB MATCHER ----
+function findKBResponse(q) {
+  var lower = q.toLowerCase();
+  var bestMatch = null;
+  var bestScore = 0;
+
+  BAZ_KB.forEach(function(entry) {
+    var score = 0;
+    entry.tags.forEach(function(tag) {
+      if (lower.indexOf(tag) !== -1) score += tag.split(' ').length;
+    });
+    if (score > bestScore) {
+      bestScore = score;
+      bestMatch = entry;
+    }
+  });
+
+  if (bestScore >= 1) return bestMatch;
+  return null;
+}
+
+// ---- IS DATASET QUERY? ----
+function isDatasetQuery(q) {
+  var lower = q.toLowerCase();
+  // Strong signals this is a data query
+  var dataSignals = [
+    /show me/,/list/,/top \d/,/fastest/,/slowest/,/highest/,/lowest/,/best/,/worst/,
+    /average/,/avg/,/how many/,/count/,/athletes aged/,/aged \d/,/age \d/,/under \d+/,
+    /202[0-9]/,/male athlete/,/female athlete/,/in 2026/,/in 2025/,/in 2024/,
+    /who has/,/who are/,/give me/,/display/
+  ];
+  var metricsPresent = detectMetric(q) !== null;
+  var agePresent = detectAgeRange(q) !== null;
+  var genderSpecific = detectGender(q) !== 'all';
+  var yearPresent = detectYear(q) !== null;
+
+  return dataSignals.some(function(r) { return r.test(lower); }) ||
+    (metricsPresent && (agePresent || genderSpecific || yearPresent));
+}
+
+// ---- FALLBACK ----
+var BAZ_FALLBACKS = [
+  'That\'s a great question! I\'m best at topics like maturation, speed development, PHV, cognitive training, nutrition, load management, technical skills, and reading COPA Score data. Could you try rephrasing or ask me something in those areas?',
+  'I\'m not sure I have enough context to answer that well. Try asking about a specific development topic — like "how do I develop speed in U14 athletes?" or use a data query like "show me the top 10 females by Copa Score in 2026".',
+  'Good question — but a bit outside my current knowledge base. I specialise in youth soccer development science and COPA Score data queries. What would you like to dig into?'
+];
+var fallbackIdx = 0;
+
+function getBazResponse(q) {
+  // Dataset query
+  if (isDatasetQuery(q)) return { type: 'data', result: runDatasetQuery(q) };
+
+  // Knowledge base match
+  var kb = findKBResponse(q);
+  if (kb) return { type: 'kb', entry: kb };
+
+  // Fallback
+  var fb = BAZ_FALLBACKS[fallbackIdx % BAZ_FALLBACKS.length];
+  fallbackIdx++;
+  return { type: 'fallback', text: fb };
+}
+
+// ---- UI ----
+var bazTypingEl = null;
+
+function bazScrollToBottom() {
+  var msgs = document.getElementById('baz-messages');
+  if (msgs) msgs.scrollTop = msgs.scrollHeight;
+}
+
+function bazAddUserMsg(text) {
+  var msgs = document.getElementById('baz-messages');
+  var d = document.createElement('div');
+  d.className = 'baz-msg user';
+  d.innerHTML = '<div class="baz-msg-av">YOU</div><div class="baz-bubble">' + safeText(text) + '</div>';
+  msgs.appendChild(d);
+  bazScrollToBottom();
+}
+
+function bazShowTyping() {
+  var msgs = document.getElementById('baz-messages');
+  bazTypingEl = document.createElement('div');
+  bazTypingEl.className = 'baz-msg baz';
+  bazTypingEl.innerHTML = '<div class="baz-msg-av">BAZ</div><div class="baz-bubble"><div class="baz-typing"><span></span><span></span><span></span></div></div>';
+  msgs.appendChild(bazTypingEl);
+  bazScrollToBottom();
+}
+
+function bazHideTyping() {
+  if (bazTypingEl) { bazTypingEl.remove(); bazTypingEl = null; }
+}
+
+function bazAddResponse(resp) {
+  var msgs = document.getElementById('baz-messages');
+  var d = document.createElement('div');
+  d.className = 'baz-msg baz';
+  var bubbleHtml = '';
+
+  if (resp.type === 'data') {
+    var r = resp.result;
+    bubbleHtml = r.text;
+    if (r.table) {
+      bubbleHtml += '<table class="baz-tbl"><thead><tr>';
+      r.table.headers.forEach(function(h) { bubbleHtml += '<th>' + safeText(h) + '</th>'; });
+      bubbleHtml += '</tr></thead><tbody>';
+      r.table.rows.forEach(function(row) {
+        bubbleHtml += '<tr>';
+        row.forEach(function(cell, i) {
+          bubbleHtml += '<td' + (i >= 2 && i <= 3 ? ' class="mono"' : '') + '>' + safeText(cell) + '</td>';
+        });
+        bubbleHtml += '</tr>';
+      });
+      bubbleHtml += '</tbody></table>';
+    }
+  } else if (resp.type === 'kb') {
+    bubbleHtml = resp.entry.response.replace(/\n/g, '<br>');
+    if (resp.entry.ref) {
+      bubbleHtml += '<div class="baz-ref">📚 ' + safeText(resp.entry.ref) + '</div>';
+    }
+  } else {
+    bubbleHtml = safeText(resp.text);
+  }
+
+  d.innerHTML = '<div class="baz-msg-av">BAZ</div><div class="baz-bubble">' + bubbleHtml + '</div>';
+  msgs.appendChild(d);
+  bazScrollToBottom();
+}
+
+function bazSend(text) {
+  var q = (text || '').trim();
+  if (!q) return;
+  var input = document.getElementById('baz-input');
+  if (input) input.value = '';
+  bazAddUserMsg(q);
+  bazShowTyping();
+  setTimeout(function() {
+    bazHideTyping();
+    var resp = getBazResponse(q);
+    bazAddResponse(resp);
+  }, 600 + Math.random() * 400);
+}
+
+function initBazChat() {
+  var input = document.getElementById('baz-input');
+  var sendBtn = document.getElementById('baz-send');
+  var closeBtn = document.getElementById('baz-close');
+  var panel = document.getElementById('baz-panel');
+  var toggleBtn = document.getElementById('baz-toggle-btn');
+
+  if (sendBtn) {
+    sendBtn.addEventListener('click', function() { bazSend(input.value); });
+  }
+  if (input) {
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); bazSend(input.value); }
+    });
+    input.addEventListener('input', function() {
+      this.style.height = 'auto';
+      this.style.height = Math.min(this.scrollHeight, 80) + 'px';
+    });
+  }
+  if (closeBtn) {
+    closeBtn.addEventListener('click', function() { panel.classList.remove('open'); });
+  }
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', function() {
+      panel.classList.toggle('open');
+      if (panel.classList.contains('open') && input) input.focus();
+    });
+  }
+
+  // Starter question buttons
+  document.querySelectorAll('.baz-starter').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      bazSend(btn.getAttribute('data-q'));
+    });
+  });
+
+  // Welcome message
+  setTimeout(function() {
+    bazAddResponse({
+      type: 'kb',
+      entry: {
+        response: 'Hi! I\'m <strong>BAZ</strong> — your COPA Score Intelligence Buddy.\n\nAsk me about player development science, or query your athlete data directly. Try one of the suggested questions below, or type your own.',
+        ref: null
+      }
+    });
+  }, 300);
+}
+
+
 </script>
 </body>
 </html>
